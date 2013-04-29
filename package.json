@@ -1,6 +1,6 @@
 {
   "name": "fusebox",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Fusebox is a widget manager for client-side applications",
   "main": "dist/sandbox.js",
   "scripts": {
