@@ -12,6 +12,9 @@ module.exports = (grunt) ->
         dest: 'dist/<%= pkg.name %>-amd.coffee'
 
     coffee:
+      specs:
+        files:
+          'spec/fuseboxSpec.js': 'spec/fuseboxSpec.coffee'
       compile:
         options:
           sourceMap: true
@@ -49,6 +52,23 @@ module.exports = (grunt) ->
     coffeelint:
       files: ['Gruntfile.coffee', 'src/*.coffee']
 
+    jasmine:
+      test:
+        options:
+          specs: 'spec/*Spec.js',
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions:
+            requireConfig:
+              baseUrl: '.',
+              paths:
+                "fusebox": "dist/fusebox-amd"
+                "jquery": "./components/jquery/jquery"
+                "underscore": "components/underscore/underscore"
+              shim:
+                'underscore':
+                  exports: '_'
+              deps: ['jquery', 'underscore', 'fusebox']
+
 
   grunt.registerTask 'default', ['coffeelint']
   grunt.registerTask 'build', [
@@ -57,6 +77,7 @@ module.exports = (grunt) ->
     'coffee',
     'uglify'
   ]
+  grunt.registerTask 'test', ['build', 'coffee:specs', 'jasmine']
 
   grunt.loadNpmTasks 'grunt-contrib-watch'
   grunt.loadNpmTasks 'grunt-coffeelint'

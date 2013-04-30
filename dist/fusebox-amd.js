@@ -22,7 +22,7 @@
   }
   return define('fusebox', ['underscore', 'jquery'], function(_, $) {
     return (function() {
-      var baseUrl, channels, decamelize, fusebox, mediator, permissions, previousFusebox, root, rules;
+      var baseUrl, channels, decamelize, fusebox, mediator, permissions, previousFusebox, req, reqjs, root, rules;
 
       root = this;
       previousFusebox = this.fusebox;
@@ -31,6 +31,8 @@
       permissions = {};
       rules = {};
       baseUrl = 'widgets/';
+      req = require;
+      reqjs = requirejs;
       decamelize = function(str, delimiter) {
         if (delimiter == null) {
           delimiter = '_';
@@ -99,7 +101,7 @@
       mediator.unload = function(channel) {
         var contextMap, key, _i, _len, _results;
 
-        contextMap = (typeof reqjs !== "undefined" && reqjs !== null ? reqjs.s.contexts._.urlMap : void 0) != null;
+        contextMap = (reqjs != null ? reqjs.s.contexts._.urlMap : void 0) != null;
         if (!contextMap) {
           return;
         }
@@ -165,21 +167,19 @@
           return baseUrl;
         },
         setRequireLib: function(reqFunc, reqGlobal) {
-          var require, requirejs;
-
           if (arguments.length < 2) {
             throw new Error('Both a require function and a requirejs global are needed');
           }
           if (typeof reqFunc !== 'function') {
             throw new Error('require needs to be a function');
           }
-          require = reqFunc;
-          return requirejs = reqGlobal;
+          req = reqFunc;
+          return reqjs = reqGlobal;
         },
         getRequireLib: function() {
           return {
-            require: require,
-            requirejs: requirejs
+            require: req,
+            requirejs: reqjs
           };
         }
       };

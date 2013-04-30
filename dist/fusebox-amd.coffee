@@ -33,6 +33,9 @@ do ->
       # Base URL to fetch widgets from
       baseUrl = 'widgets/'
     
+      req = require
+      reqjs = requirejs
+    
       decamelize = (str, delimiter = '_') ->
         str.replace(/([A-Z])/g, delimiter + '$1').toLowerCase()
     
@@ -257,13 +260,13 @@ do ->
             'require needs to be a function'
           ) if (typeof reqFunc isnt 'function')
     
-          require = reqFunc
-          requirejs = reqGlobal
+          req = reqFunc
+          reqjs = reqGlobal
     
         getRequireLib: () ->
           {
-            require: require,
-            requirejs: requirejs
+            require: req,
+            requirejs: reqjs
           }
     
       # Expose fusebox
