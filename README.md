@@ -3,7 +3,7 @@
 Fusebox allows you to employ self-contained, autonomous widgets throughout your app. It is responsible for controlling widget lifecycle and provides several helper methods to widgets that hide platform-specific implementations.
 
 # Getting it
-Install through (Bower)[http://bower.io]:
+Install through [Bower](http://bower.io):
 ```
 bower install fusebox --save
 ```
