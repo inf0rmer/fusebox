@@ -62,3 +62,41 @@ fusebox.stop("my-widget", "[data-widget='my-widget']")
 ```javascript
 fusebox.unload("my-widget")
 ```
+
+## Widget Communication
+Widgets work better if they're dumb. If a widget needs some data that is not considered to be in their scope, they can request it from a central Fusebox registry.
+On the other hand, if widgets (or modules that manage widgets, like a page) can provide useful information, they can use Fusebox to register themselves as providers.
+Fusebox uses jQuery's Deferreds, because it was practical and jQuery was already sort of needed.
+
+### Responding to requests
+When you register with Fusebox to respond to a data point (in this case, "events:56:related"), you pass a callback with it. This callback receives a Deferred object as its argument. You are responsible for resolving or rejecting the Deferred.
+
+```javascript
+fusebox.responds("events:56:related", function(dfd) {
+  // Your async call...
+  // And then call dfd.resolve(myData) or dfd.reject(myError)
+});
+```
+
+### Requesting a data point
+When performing a request for a data point, you get back a Promise object. You can then attach handlers to it like you would any other promise.
+If you request a data point that no one has registered to respond to, you get back a rejected promise.
+
+```javascript
+result = fusebox.request("events:56:related");
+
+result
+.done(function(data){
+  // Do something with the data
+})
+.fail(function() {
+  // It failed! Do something
+});
+```
+
+### Stop responding to requests
+If you need to stop responding to a request (ie. a page is being trashed), use the ```stopsResponding``` method. This frees up the slot for other modules to register as responders.
+
+```javascript
+fusebox.stopsResponding("events:56:related");
+```
