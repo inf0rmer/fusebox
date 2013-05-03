@@ -32,6 +32,8 @@ do ->
       rules = {}
       # Base URL to fetch widgets from
       baseUrl = 'widgets/'
+      # Responder cache
+      responderCache = {}
     
       req = require
       reqjs = requirejs
@@ -164,6 +166,43 @@ do ->
             req.undef(key)
     
       #
+      # Respond to a data point with a specific callback,
+      # using promises.
+      #
+      # @param {string} dataPoint
+      # @param {function} callback
+      mediator.responds = (dataPoint, callback) ->
+        dfd = new $.Deferred
+        responderCache[dataPoint] = () ->
+          callback.call @, dfd
+          return dfd
+    
+        return mediator
+    
+      #
+      # Stops responding to a data point
+      #
+      # @param {string} dataPoint
+      mediator.stopsResponding = (dataPoint) ->
+        responderCache[dataPoint] = null
+        delete responderCache[dataPoint]
+    
+        return mediator
+    
+      #
+      # Perform a request for a data point
+      #
+      # @param {string} dataPoint
+      mediator.request = (dataPoint) ->
+        if responderCache[dataPoint]?
+          dfd = responderCache[dataPoint]()
+        else
+          dfd = new $.Deferred
+          dfd.reject()
+    
+        return dfd.promise()
+    
+      #
       # DOM Helper object for widgets
       #
       mediator.dom =
@@ -229,7 +268,30 @@ do ->
         #
         unload: (subscriber) ->
           file = decamelize(channel)
-          mediator.unload.apply baseUrl + file
+          mediator.unload.apply mediator, baseUrl + file
+    
+        #
+        # Respond to a data point with a specific callback,
+        # using promises.
+        #
+        # @param {string} dataPoint
+        # @param {function} callback
+        responds: (dataPoint, callback) ->
+          mediator.responds.apply mediator, arguments
+    
+        #
+        # Stops responding to a data point
+        #
+        # @param {string} dataPoint
+        stopsResponding: (dataPoint) ->
+          mediator.stopsResponding.apply mediator, arguments
+    
+        #
+        # Perform a request for a data point
+        #
+        # @param {string} dataPoint
+        request: (dataPoint) ->
+          mediator.request.apply mediator, arguments
     
         #
         # @param {string} selector CSS selector for the element

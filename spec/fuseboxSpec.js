@@ -97,7 +97,7 @@
         return expect(done).toBe(true);
       });
     });
-    return describe('Lifecycle', function() {
+    describe('Lifecycle', function() {
       it('can start a widget', function() {
         var done, req;
 
@@ -151,6 +151,70 @@
         Sandbox.setRequireLib(req, requirejs);
         Sandbox.stop('my-widget', '.my-widget');
         return expect($('.my-widget').html()).toBe('');
+      });
+    });
+    return describe('Data Responders', function() {
+      it('allows chaining when responding to a data point', function() {
+        var mediator;
+
+        mediator = Sandbox.responds("my:data:point", function(dfd) {
+          dfd.resolve(true);
+          return dfd.promise();
+        });
+        return expect(mediator.responds).toBeDefined();
+      });
+      it('allows chaining when relinquishing response to a data point', function() {
+        var mediator;
+
+        Sandbox.responds("my:data:point", function(dfd) {
+          dfd.resolve(true);
+          return dfd.promise();
+        });
+        mediator = Sandbox.stopsResponding('my:data:point');
+        return expect(mediator.responds).toBeDefined();
+      });
+      it('can request a data point', function() {
+        var done;
+
+        done = false;
+        Sandbox.responds("my:data:point", function(dfd) {
+          dfd.resolve(true);
+          return dfd.promise();
+        });
+        runs(function() {
+          var promise;
+
+          promise = Sandbox.request("my:data:point");
+          return promise.done(function(val) {
+            done = val;
+            return expect(done).toBeTruthy();
+          });
+        });
+        return waitsFor(function() {
+          return done;
+        });
+      });
+      return it('can stop responding to a data point', function() {
+        var done;
+
+        done = false;
+        Sandbox.responds("my:data:point", function(dfd) {
+          dfd.resolve(true);
+          return dfd.promise();
+        });
+        Sandbox.stopsResponding("my:data:point");
+        runs(function() {
+          var promise;
+
+          promise = Sandbox.request("my:data:point");
+          return promise.fail(function() {
+            done = true;
+            return expect(done).toBeTruthy();
+          });
+        });
+        return waitsFor(function() {
+          return done;
+        });
       });
     });
   });
