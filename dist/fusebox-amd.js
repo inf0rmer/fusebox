@@ -22,7 +22,7 @@
   }
   return define('fusebox', ['underscore', 'jquery'], function(_, $) {
     return (function() {
-      var baseUrl, channels, decamelize, fusebox, mediator, permissions, previousFusebox, req, reqjs, root, rules;
+      var baseUrl, channels, decamelize, fusebox, mediator, permissions, previousFusebox, req, reqjs, responderCache, root, rules;
 
       root = this;
       previousFusebox = this.fusebox;
@@ -31,6 +31,7 @@
       permissions = {};
       rules = {};
       baseUrl = 'widgets/';
+      responderCache = {};
       req = require;
       reqjs = requirejs;
       decamelize = function(str, delimiter) {
@@ -122,6 +123,32 @@
         }
         return _results;
       };
+      mediator.responds = function(dataPoint, callback) {
+        var dfd;
+
+        dfd = new $.Deferred;
+        responderCache[dataPoint] = function() {
+          callback.call(this, dfd);
+          return dfd;
+        };
+        return mediator;
+      };
+      mediator.stopsResponding = function(dataPoint) {
+        responderCache[dataPoint] = null;
+        delete responderCache[dataPoint];
+        return mediator;
+      };
+      mediator.request = function(dataPoint) {
+        var dfd;
+
+        if (responderCache[dataPoint] != null) {
+          dfd = responderCache[dataPoint]();
+        } else {
+          dfd = new $.Deferred;
+          dfd.reject();
+        }
+        return dfd.promise();
+      };
       mediator.dom = {
         find: function(selector, context) {
           if (context == null) {
@@ -156,7 +183,16 @@
           var file;
 
           file = decamelize(channel);
-          return mediator.unload.apply(baseUrl + file);
+          return mediator.unload.apply(mediator, baseUrl + file);
+        },
+        responds: function(dataPoint, callback) {
+          return mediator.responds.apply(mediator, arguments);
+        },
+        stopsResponding: function(dataPoint) {
+          return mediator.stopsResponding.apply(mediator, arguments);
+        },
+        request: function(dataPoint) {
+          return mediator.request.apply(mediator, arguments);
         },
         find: function(selector, context) {
           return mediator.dom.find(selector, context);

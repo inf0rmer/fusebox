@@ -146,3 +146,50 @@ describe 'Sandbox', ->
 
       expect($('.my-widget').html()).toBe('')
 
+  describe 'Data Responders', ->
+
+    it 'allows chaining when responding to a data point', ->
+      mediator = Sandbox.responds "my:data:point", (dfd) ->
+        dfd.resolve(true)
+
+      expect(mediator.responds).toBeDefined()
+
+    it 'allows chaining when relinquishing response to a data point', ->
+      Sandbox.responds "my:data:point", (dfd) ->
+        dfd.resolve(true)
+
+      mediator = Sandbox.stopsResponding 'my:data:point'
+
+      expect(mediator.responds).toBeDefined()
+
+    it 'can request a data point', ->
+      done = false
+
+      Sandbox.responds "my:data:point", (dfd) ->
+        dfd.resolve(true)
+
+      runs ->
+        promise = Sandbox.request "my:data:point"
+        promise.done (val) ->
+          done = val
+          expect(done).toBeTruthy()
+
+      waitsFor ->
+        done
+
+    it 'can stop responding to a data point', ->
+      done = false
+
+      Sandbox.responds "my:data:point", (dfd) ->
+        dfd.resolve(true)
+
+      Sandbox.stopsResponding "my:data:point"
+
+      runs ->
+        promise = Sandbox.request "my:data:point"
+        promise.fail ->
+          done = true
+          expect(done).toBeTruthy()
+
+      waitsFor ->
+        done
