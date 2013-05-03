@@ -92,8 +92,9 @@ do ->
     # If a widget hasn't called subscribe this will fail because it won't
     # be present in the channels object
     req [baseUrl + file + "/main"], () ->
-      _.each channels[channel].bootstrap, (fn) ->
-        fn.apply(mediator, args)
+      if channels[channel]?.bootstrap?
+        _.each channels[channel].bootstrap, (fn) ->
+          fn.apply(mediator, args)
 
   #
   # Stop a widget, calling it's ```unload``` event
@@ -104,7 +105,8 @@ do ->
     el = args[0]
     file = decamelize(channel)
 
-    mediator.publish.apply(mediator, ['unload', channel].concat(args))
+    if channels[channel]?.unload?
+      mediator.publish.apply(mediator, ['unload', channel].concat(args))
 
     if el
       # Empty markup associated with the module

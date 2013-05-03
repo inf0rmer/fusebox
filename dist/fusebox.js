@@ -59,18 +59,24 @@
     args = [].slice.call(arguments, 1);
     file = decamelize(channel);
     return req([baseUrl + file + "/main"], function() {
-      return _.each(channels[channel].bootstrap, function(fn) {
-        return fn.apply(mediator, args);
-      });
+      var _ref;
+
+      if (((_ref = channels[channel]) != null ? _ref.bootstrap : void 0) != null) {
+        return _.each(channels[channel].bootstrap, function(fn) {
+          return fn.apply(mediator, args);
+        });
+      }
     });
   };
   mediator.stop = function(channel) {
-    var args, el, file;
+    var args, el, file, _ref;
 
     args = [].slice.call(arguments, 1);
     el = args[0];
     file = decamelize(channel);
-    mediator.publish.apply(mediator, ['unload', channel].concat(args));
+    if (((_ref = channels[channel]) != null ? _ref.unload : void 0) != null) {
+      mediator.publish.apply(mediator, ['unload', channel].concat(args));
+    }
     if (el) {
       return $(el).html('');
     }
