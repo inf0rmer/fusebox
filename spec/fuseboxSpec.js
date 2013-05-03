@@ -158,8 +158,7 @@
         var mediator;
 
         mediator = Sandbox.responds("my:data:point", function(dfd) {
-          dfd.resolve(true);
-          return dfd.promise();
+          return dfd.resolve(true);
         });
         return expect(mediator.responds).toBeDefined();
       });
@@ -167,8 +166,7 @@
         var mediator;
 
         Sandbox.responds("my:data:point", function(dfd) {
-          dfd.resolve(true);
-          return dfd.promise();
+          return dfd.resolve(true);
         });
         mediator = Sandbox.stopsResponding('my:data:point');
         return expect(mediator.responds).toBeDefined();
@@ -178,8 +176,7 @@
 
         done = false;
         Sandbox.responds("my:data:point", function(dfd) {
-          dfd.resolve(true);
-          return dfd.promise();
+          return dfd.resolve(true);
         });
         runs(function() {
           var promise;
@@ -199,8 +196,7 @@
 
         done = false;
         Sandbox.responds("my:data:point", function(dfd) {
-          dfd.resolve(true);
-          return dfd.promise();
+          return dfd.resolve(true);
         });
         Sandbox.stopsResponding("my:data:point");
         runs(function() {

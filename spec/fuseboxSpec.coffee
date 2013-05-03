@@ -151,14 +151,12 @@ describe 'Sandbox', ->
     it 'allows chaining when responding to a data point', ->
       mediator = Sandbox.responds "my:data:point", (dfd) ->
         dfd.resolve(true)
-        dfd.promise()
 
       expect(mediator.responds).toBeDefined()
 
     it 'allows chaining when relinquishing response to a data point', ->
       Sandbox.responds "my:data:point", (dfd) ->
         dfd.resolve(true)
-        dfd.promise()
 
       mediator = Sandbox.stopsResponding 'my:data:point'
 
@@ -169,7 +167,6 @@ describe 'Sandbox', ->
 
       Sandbox.responds "my:data:point", (dfd) ->
         dfd.resolve(true)
-        dfd.promise()
 
       runs ->
         promise = Sandbox.request "my:data:point"
@@ -185,7 +182,6 @@ describe 'Sandbox', ->
 
       Sandbox.responds "my:data:point", (dfd) ->
         dfd.resolve(true)
-        dfd.promise()
 
       Sandbox.stopsResponding "my:data:point"
 
