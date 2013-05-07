@@ -76,7 +76,9 @@
     el = args[0];
     file = decamelize(channel);
     if (((_ref = channels[channel]) != null ? _ref.unload : void 0) != null) {
-      mediator.publish.apply(mediator, ['unload', channel].concat(args));
+      _.each(channels[channel].unload, function(fn) {
+        return fn.apply(mediator, args);
+      });
     }
     if (el) {
       return $(el).html('');

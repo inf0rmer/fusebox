@@ -124,7 +124,8 @@ do ->
         file = decamelize(channel)
     
         if channels[channel]?.unload?
-          mediator.publish.apply(mediator, ['unload', channel].concat(args))
+          _.each channels[channel].unload, (fn) ->
+            fn.apply(mediator, args)
     
         if el
           # Empty markup associated with the module
