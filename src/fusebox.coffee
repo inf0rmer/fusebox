@@ -149,6 +149,7 @@ do ->
     for key in contextMap
       if contextMap.hasOwnProperty(key) and key.indexOf(channel) isnt -1
         req.undef(key)
+        @unsubscribe channel
 
   #
   # Respond to a data point with a specific callback,
@@ -229,6 +230,12 @@ do ->
     subscribe: (subscriber, channel, callback) ->
       if permissions.validate(subscriber, channel)
         mediator.subscribe subscriber, channel, callback, this
+
+    #
+    #  @param {string} subscriber Module name
+    #
+    unsubscribe: (subscriber) ->
+      mediator.unsubscribe subscriber
 
     #
     # @param {string} subscriber Module name
