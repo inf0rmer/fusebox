@@ -44,10 +44,14 @@ describe 'Sandbox', ->
       fn = () ->
         return
 
-      expect(Sandbox.setRequireLib).toThrow(new Error('Both a require function and a requirejs global are needed'))
+      expect(Sandbox.setRequireLib).toThrow(
+        new Error('Both a require function and a requirejs global are needed')
+      )
       expect( ()->
         Sandbox.setRequireLib(fn)
-      ).toThrow(new Error('Both a require function and a requirejs global are needed'))
+      ).toThrow(
+        new Error('Both a require function and a requirejs global are needed')
+      )
 
     it 'throws an Error when setRequireLib receives a non-function as a first param', ->
       expect( ()->
@@ -88,6 +92,19 @@ describe 'Sandbox', ->
       Sandbox.publish 'apocalypse', 'my-widget'
 
       expect(done).toBe(true)
+
+    it 'can unsubscribe from all of a widget\'s events', ->
+
+      Sandbox.permissions.extend
+        "my-widget":
+          apocalypse: true
+
+      spy = jasmine.createSpy()
+      Sandbox.subscribe 'apocalypse', 'my-widget', spy
+
+      Sandbox.unsubscribe 'my-widget'
+      Sandbox.publish 'apocalypse', 'my-widget'
+      expect(spy).not.toHaveBeenCalled()
 
   describe 'Lifecycle', ->
 

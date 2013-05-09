@@ -95,7 +95,8 @@
     for (_i = 0, _len = contextMap.length; _i < _len; _i++) {
       key = contextMap[_i];
       if (contextMap.hasOwnProperty(key) && key.indexOf(channel) !== -1) {
-        _results.push(req.undef(key));
+        req.undef(key);
+        _results.push(this.unsubscribe(channel));
       } else {
         _results.push(void 0);
       }
@@ -148,6 +149,9 @@
       if (permissions.validate(subscriber, channel)) {
         return mediator.subscribe(subscriber, channel, callback, this);
       }
+    },
+    unsubscribe: function(subscriber) {
+      return mediator.unsubscribe(subscriber);
     },
     publish: function(subscriber) {
       return mediator.publish.apply(mediator, arguments);

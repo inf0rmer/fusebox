@@ -81,7 +81,7 @@
       });
     });
     describe('Pub/Sub', function() {
-      return it('can subscribe to a widget event and publish it', function() {
+      it('can subscribe to a widget event and publish it', function() {
         var done;
 
         done = false;
@@ -95,6 +95,20 @@
         });
         Sandbox.publish('apocalypse', 'my-widget');
         return expect(done).toBe(true);
+      });
+      return it('can unsubscribe from all of a widget\'s events', function() {
+        var spy;
+
+        Sandbox.permissions.extend({
+          "my-widget": {
+            apocalypse: true
+          }
+        });
+        spy = jasmine.createSpy();
+        Sandbox.subscribe('apocalypse', 'my-widget', spy);
+        Sandbox.unsubscribe('my-widget');
+        Sandbox.publish('apocalypse', 'my-widget');
+        return expect(spy).not.toHaveBeenCalled();
       });
     });
     describe('Lifecycle', function() {
