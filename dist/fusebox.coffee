@@ -158,8 +158,8 @@ do ->
   # @param {string} dataPoint
   # @param {function} callback
   mediator.responds = (dataPoint, callback) ->
-    dfd = new $.Deferred
     responderCache[dataPoint] = () ->
+      dfd = new $.Deferred
       callback.call @, dfd
       return dfd
 

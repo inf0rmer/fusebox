@@ -127,10 +127,10 @@
         return _results;
       };
       mediator.responds = function(dataPoint, callback) {
-        var dfd;
-
-        dfd = new $.Deferred;
         responderCache[dataPoint] = function() {
+          var dfd;
+
+          dfd = new $.Deferred;
           callback.call(this, dfd);
           return dfd;
         };
