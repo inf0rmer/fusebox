@@ -105,10 +105,12 @@
   };
   mediator.responds = function(dataPoint, callback) {
     responderCache[dataPoint] = function() {
-      var dfd;
+      var args, dfd;
 
+      args = Array.prototype.slice.call(arguments, 0);
       dfd = new $.Deferred;
-      callback.call(this, dfd);
+      args.unshift(dfd);
+      callback.apply(this, args);
       return dfd;
     };
     return mediator;
@@ -119,10 +121,12 @@
     return mediator;
   };
   mediator.request = function(dataPoint) {
-    var dfd;
+    var args, dfd;
 
+    args = Array.prototype.slice.call(arguments, 0);
+    args.shift();
     if (responderCache[dataPoint] != null) {
-      dfd = responderCache[dataPoint]();
+      dfd = responderCache[dataPoint].apply(this, args);
     } else {
       dfd = new $.Deferred;
       dfd.reject();

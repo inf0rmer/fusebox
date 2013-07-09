@@ -159,8 +159,10 @@ do ->
   # @param {function} callback
   mediator.responds = (dataPoint, callback) ->
     responderCache[dataPoint] = () ->
+      args = Array.prototype.slice.call(arguments, 0)
       dfd = new $.Deferred
-      callback.call @, dfd
+      args.unshift dfd
+      callback.apply @, args
       return dfd
 
     return mediator
@@ -180,8 +182,10 @@ do ->
   #
   # @param {string} dataPoint
   mediator.request = (dataPoint) ->
+    args = Array.prototype.slice.call(arguments, 0)
+    args.shift()
     if responderCache[dataPoint]?
-      dfd = responderCache[dataPoint]()
+      dfd = responderCache[dataPoint].apply(this, args)
     else
       dfd = new $.Deferred
       dfd.reject()
