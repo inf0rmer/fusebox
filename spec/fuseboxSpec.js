@@ -205,6 +205,26 @@
           return done;
         });
       });
+      it('can pass arguments to a request for a data point', function() {
+        var done;
+
+        done = false;
+        Sandbox.responds("my:data:point", function(dfd, value) {
+          return dfd.resolve(value);
+        });
+        runs(function() {
+          var promise;
+
+          promise = Sandbox.request("my:data:point", true);
+          return promise.done(function(val) {
+            done = val;
+            return expect(done).toBeTruthy();
+          });
+        });
+        return waitsFor(function() {
+          return done;
+        });
+      });
       return it('can stop responding to a data point', function() {
         var done;
 

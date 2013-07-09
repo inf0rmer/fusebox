@@ -194,6 +194,21 @@ describe 'Sandbox', ->
       waitsFor ->
         done
 
+    it 'can pass arguments to a request for a data point', ->
+      done = false
+
+      Sandbox.responds "my:data:point", (dfd, value) ->
+        dfd.resolve(value)
+
+      runs ->
+        promise = Sandbox.request "my:data:point", true
+        promise.done (val) ->
+          done = val
+          expect(done).toBeTruthy()
+
+      waitsFor ->
+        done
+
     it 'can stop responding to a data point', ->
       done = false
 
